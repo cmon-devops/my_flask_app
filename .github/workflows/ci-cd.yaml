@@ -20,12 +20,19 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install flake8
+          pip install flake8 pytest
+
+      - name: Lint code
+        run: |
           flake8 .
+
+      - name: Check Current Directory
+        run: |
+          pwd
 
       - name: Run Tests
         run: |
-          pytest tests/
+          PYTHONPATH=. pytest tests/
 
       - name: Log in to Amazon ECR
         id: ecr-login
