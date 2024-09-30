@@ -20,31 +20,24 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install flake8 pytest
-
-      - name: Lint code
-        run: |
+          pip install flake8
           flake8 .
-
-      - name: Check Current Directory
-        run: |
-          pwd
 
       - name: Run Tests
         run: |
-          PYTHONPATH=. pytest tests/
+          pytest tests/
 
       - name: Configure AWS Credentials
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          echo "AWS credentials configured"
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-2
+
+      - name: Check AWS Configuration
+        run: |
+          aws configure list
 
       - name: Log in to Amazon ECR
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 529088267622.dkr.ecr.us-east-2.amazonaws.com
 
